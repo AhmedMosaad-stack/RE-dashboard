@@ -1,0 +1,21 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm install *)",
+      "Bash(rm -rf .next)",
+      "Bash(ls .next)",
+      "Bash(npm run *)",
+      "Bash(curl *)",
+      "Bash(npx tsc *)",
+      "Bash(npm uninstall *)",
+      "Bash(git add *)",
+      "Bash(git commit *)",
+      "Bash(git remote *)",
+      "Bash(git push *)",
+      "Bash(npx next *)",
+      "Bash(echo \"EXIT=$?\")",
+      "Bash(npx eslint *)",
+      "Bash(echo \"EXIT:$?\")"
+    ]
+  }
+}
