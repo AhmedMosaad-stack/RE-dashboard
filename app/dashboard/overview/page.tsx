@@ -15,7 +15,6 @@ import {
 import { PageHeader } from '@/components/shared/PageHeader';
 import { StatCard } from '@/components/cards/StatCard';
 import { CardSkeleton, TableSkeleton } from '@/components/shared/LoadingSkeleton';
-import { LazyOnVisible } from '@/components/shared/LazyOnVisible';
 import { EmptyState } from '@/components/shared/EmptyState';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -29,33 +28,23 @@ import {
 } from '@/components/ui/table';
 import { StatusBadge } from '@/components/shared/StatusBadge';
 
-const BookingsTrendChart = dynamic(
-  () =>
-    import('@/components/charts/BookingsTrendChart').then(
-      (m) => m.BookingsTrendChart,
+const OverviewCharts = dynamic(
+  () => import('@/components/charts/OverviewCharts'),
+  {
+    ssr: false,
+    loading: () => (
+      <>
+        <div className="grid grid-cols-1 gap-4 lg:grid-cols-5">
+          <div className="lg:col-span-3"><CardSkeleton /></div>
+          <div className="lg:col-span-2"><CardSkeleton /></div>
+        </div>
+        <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+          <CardSkeleton />
+          <CardSkeleton />
+        </div>
+      </>
     ),
-  { ssr: false, loading: () => <CardSkeleton /> },
-);
-const BookingStatusChart = dynamic(
-  () =>
-    import('@/components/charts/BookingStatusChart').then(
-      (m) => m.BookingStatusChart,
-    ),
-  { ssr: false, loading: () => <CardSkeleton /> },
-);
-const RevenueByDestChart = dynamic(
-  () =>
-    import('@/components/charts/RevenueByDestChart').then(
-      (m) => m.RevenueByDestChart,
-    ),
-  { ssr: false, loading: () => <CardSkeleton /> },
-);
-const MonthlyRevenueChart = dynamic(
-  () =>
-    import('@/components/charts/MonthlyRevenueChart').then(
-      (m) => m.MonthlyRevenueChart,
-    ),
-  { ssr: false, loading: () => <CardSkeleton /> },
+  },
 );
 import {
   useBookings,
@@ -137,6 +126,14 @@ export default function OverviewPage() {
       ? `All of ${selectedYear}`
       : `${MONTH_NAMES[selectedMonth - 1]} ${selectedYear}`;
 
+  const bookingStatusData = filteredBookingStats.data
+    ? {
+        confirmed: filteredBookingStats.data.confirmed,
+        pending: filteredBookingStats.data.pending,
+        cancelled: filteredBookingStats.data.cancelled,
+      }
+    : undefined;
+
   return (
     <div className="page-fade-in space-y-6">
       <PageHeader title="Overview" subtitle="Business performance at a glance." />
@@ -180,84 +177,13 @@ export default function OverviewPage() {
         />
       </div>
 
-      <div className="grid grid-cols-1 gap-4 lg:grid-cols-5">
-        <Card
-          className="chart-container hand-border card-pop lg:col-span-3"
-          style={{ '--chart-accent': 'var(--pop-blue)' } as React.CSSProperties}
-        >
-          <CardHeader>
-            <CardTitle>Bookings Trend</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <LazyOnVisible rootMargin="100px" fallback={<CardSkeleton />}>
-              <BookingsTrendChart
-                data={filteredBookingStats.data?.byMonth}
-                selectedMonth={selectedMonth}
-              />
-            </LazyOnVisible>
-          </CardContent>
-        </Card>
-        <Card
-          className="chart-container hand-border card-pop lg:col-span-2"
-          style={{ '--chart-accent': 'var(--pop-red)' } as React.CSSProperties}
-        >
-          <CardHeader>
-            <CardTitle>Booking Status</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <LazyOnVisible rootMargin="100px" fallback={<CardSkeleton />}>
-              <BookingStatusChart
-                mode="count"
-                data={
-                  filteredBookingStats.data
-                    ? {
-                        confirmed: filteredBookingStats.data.confirmed,
-                        pending: filteredBookingStats.data.pending,
-                        cancelled: filteredBookingStats.data.cancelled,
-                      }
-                    : undefined
-                }
-              />
-            </LazyOnVisible>
-          </CardContent>
-        </Card>
-      </div>
-
-      <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
-        <Card
-          className="chart-container hand-border card-pop"
-          style={{ '--chart-accent': 'var(--pop-teal)' } as React.CSSProperties}
-        >
-          <CardHeader>
-            <CardTitle>Revenue by Destination</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <LazyOnVisible rootMargin="100px" fallback={<CardSkeleton />}>
-              <RevenueByDestChart
-                limit={5}
-                layout="horizontal"
-                data={filteredRevenueStats.data?.byDestination}
-              />
-            </LazyOnVisible>
-          </CardContent>
-        </Card>
-        <Card
-          className="chart-container hand-border card-pop"
-          style={{ '--chart-accent': 'var(--pop-green)' } as React.CSSProperties}
-        >
-          <CardHeader>
-            <CardTitle>Monthly Revenue</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <LazyOnVisible rootMargin="100px" fallback={<CardSkeleton />}>
-              <MonthlyRevenueChart
-                data={filteredRevenueStats.data?.byMonth}
-                selectedMonth={selectedMonth}
-              />
-            </LazyOnVisible>
-          </CardContent>
-        </Card>
-      </div>
+      <OverviewCharts
+        selectedMonth={selectedMonth}
+        bookingsByMonth={filteredBookingStats.data?.byMonth}
+        bookingStatus={bookingStatusData}
+        revenueByDest={filteredRevenueStats.data?.byDestination}
+        revenueByMonth={filteredRevenueStats.data?.byMonth}
+      />
 
       <Card>
         <CardHeader className="flex-row items-center justify-between">
@@ -309,7 +235,7 @@ export default function OverviewPage() {
           )}
           <div className="mt-4 flex justify-end">
             <Button asChild variant="ghost" size="sm">
-              <Link href="/dashboard/bookings">
+              <Link href="/dashboard/bookings" prefetch={false}>
                 View all bookings
                 <ArrowRight className="ml-1.5 h-4 w-4" />
               </Link>

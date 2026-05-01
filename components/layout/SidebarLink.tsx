@@ -26,6 +26,7 @@ export function SidebarLink({
   return (
     <Link
       href={href}
+      prefetch={false}
       title={collapsed ? label : undefined}
       data-active={isActive}
       data-collapsed={collapsed ? 'true' : 'false'}

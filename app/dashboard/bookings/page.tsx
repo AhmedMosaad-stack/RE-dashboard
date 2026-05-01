@@ -1,6 +1,7 @@
 'use client';
 
 import { useMemo, useState } from 'react';
+import dynamic from 'next/dynamic';
 
 import { AlertCircle, Plus, Search } from 'lucide-react';
 import { useQueryClient } from '@tanstack/react-query';
@@ -27,7 +28,11 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import { BookingsTable } from '@/components/tables/BookingsTable';
-import { BookingForm } from '@/components/forms/BookingForm';
+
+const BookingForm = dynamic(
+  () => import('@/components/forms/BookingForm').then((m) => m.BookingForm),
+  { ssr: false },
+);
 import { useBookings } from '@/lib/hooks/useBookings';
 import {
   useDashboardStore,

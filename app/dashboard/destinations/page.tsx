@@ -9,7 +9,6 @@ import { toast } from 'sonner';
 
 import { PageHeader } from '@/components/shared/PageHeader';
 import { CardSkeleton } from '@/components/shared/LoadingSkeleton';
-import { LazyOnVisible } from '@/components/shared/LazyOnVisible';
 import { EmptyState } from '@/components/shared/EmptyState';
 import { ConfirmDialog } from '@/components/shared/ConfirmDialog';
 import { Button } from '@/components/ui/button';
@@ -27,8 +26,12 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import { DestinationCard } from '@/components/cards/DestinationCard';
-import { DestinationForm } from '@/components/forms/DestinationForm';
 
+const DestinationForm = dynamic(
+  () =>
+    import('@/components/forms/DestinationForm').then((m) => m.DestinationForm),
+  { ssr: false },
+);
 const DestinationsMap = dynamic(
   () =>
     import('@/components/charts/DestinationsMap').then((m) => m.DestinationsMap),
@@ -89,9 +92,7 @@ export default function DestinationsPage() {
               <CardTitle>Global Reach</CardTitle>
             </CardHeader>
             <CardContent>
-              <LazyOnVisible rootMargin="100px" fallback={<CardSkeleton />}>
-                <DestinationsMap />
-              </LazyOnVisible>
+              <DestinationsMap />
             </CardContent>
           </Card>
 

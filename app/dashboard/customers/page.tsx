@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import dynamic from 'next/dynamic';
 
 import {
   AlertCircle,
@@ -28,7 +29,11 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import { CustomersTable } from '@/components/tables/CustomersTable';
-import { CustomerForm } from '@/components/forms/CustomerForm';
+
+const CustomerForm = dynamic(
+  () => import('@/components/forms/CustomerForm').then((m) => m.CustomerForm),
+  { ssr: false },
+);
 import { useCustomers, useCustomerStats } from '@/lib/hooks/useCustomers';
 import { useBookings } from '@/lib/hooks/useBookings';
 import { useDashboardStore } from '@/lib/store/useDashboardStore';

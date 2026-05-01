@@ -1,9 +1,14 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
+import dynamic from 'next/dynamic';
 import { Calendar } from 'lucide-react';
 import { useDashboardStore } from '@/lib/store/useDashboardStore';
-import { MonthYearPicker } from './MonthYearPicker';
+
+const MonthYearPicker = dynamic(
+  () => import('./MonthYearPicker').then((m) => m.MonthYearPicker),
+  { ssr: false },
+);
 
 const MONTH_LABELS = [
   'Jan',

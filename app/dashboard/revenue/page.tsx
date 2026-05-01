@@ -14,7 +14,6 @@ import {
 import { PageHeader } from '@/components/shared/PageHeader';
 import { StatCard } from '@/components/cards/StatCard';
 import { CardSkeleton, TableSkeleton } from '@/components/shared/LoadingSkeleton';
-import { LazyOnVisible } from '@/components/shared/LazyOnVisible';
 import { EmptyState } from '@/components/shared/EmptyState';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import {
@@ -26,26 +25,20 @@ import {
   TableRow,
 } from '@/components/ui/table';
 
-const MonthlyRevenueChart = dynamic(
-  () =>
-    import('@/components/charts/MonthlyRevenueChart').then(
-      (m) => m.MonthlyRevenueChart,
+const RevenueCharts = dynamic(
+  () => import('@/components/charts/RevenueCharts'),
+  {
+    ssr: false,
+    loading: () => (
+      <>
+        <CardSkeleton />
+        <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+          <CardSkeleton />
+          <CardSkeleton />
+        </div>
+      </>
     ),
-  { ssr: false, loading: () => <CardSkeleton /> },
-);
-const RevenueByDestChart = dynamic(
-  () =>
-    import('@/components/charts/RevenueByDestChart').then(
-      (m) => m.RevenueByDestChart,
-    ),
-  { ssr: false, loading: () => <CardSkeleton /> },
-);
-const BookingStatusChart = dynamic(
-  () =>
-    import('@/components/charts/BookingStatusChart').then(
-      (m) => m.BookingStatusChart,
-    ),
-  { ssr: false, loading: () => <CardSkeleton /> },
+  },
 );
 import { useFilteredRevenueStats } from '@/lib/hooks/useRevenue';
 import { useFilteredBookingStats } from '@/lib/hooks/useBookings';
@@ -66,22 +59,6 @@ export default function RevenuePage() {
     filteredRevenueStats.isError || filteredBookingStats.isError;
   const isLoading = filteredRevenueStats.isLoading;
 
-  if (isError) {
-    return (
-      <div className="page-fade-in space-y-6">
-        <PageHeader
-          title="Revenue"
-          subtitle={`${selectedYear} revenue and growth metrics.`}
-        />
-        <EmptyState
-          title="Something went wrong"
-          description="We couldn't load revenue data. Please refresh the page."
-          icon={AlertCircle}
-        />
-      </div>
-    );
-  }
-
   const data = filteredRevenueStats.data;
   const byMonth = data?.byMonth;
 
@@ -99,6 +76,31 @@ export default function RevenuePage() {
           : { month: '—', revenue: 0 },
     };
   }, [byMonth]);
+
+  if (isError) {
+    return (
+      <div className="page-fade-in space-y-6">
+        <PageHeader
+          title="Revenue"
+          subtitle={`${selectedYear} revenue and growth metrics.`}
+        />
+        <EmptyState
+          title="Something went wrong"
+          description="We couldn't load revenue data. Please refresh the page."
+          icon={AlertCircle}
+        />
+      </div>
+    );
+  }
+
+  const bookingStatusData =
+    filteredBookingStats.data && data
+      ? {
+          confirmed: data.totalRevenue,
+          pending: 0,
+          cancelled: data.cancelledRevenue,
+        }
+      : undefined;
 
   return (
     <div className="page-fade-in space-y-6">
@@ -150,67 +152,12 @@ export default function RevenuePage() {
         />
       </div>
 
-      <Card
-        className="chart-container hand-border card-pop"
-        style={{ '--chart-accent': 'var(--pop-green)' } as React.CSSProperties}
-      >
-        <CardHeader>
-          <CardTitle>Monthly Revenue & Bookings</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <LazyOnVisible rootMargin="100px" fallback={<CardSkeleton />}>
-            <MonthlyRevenueChart
-              showBookings
-              height={350}
-              data={data?.byMonth}
-              selectedMonth={selectedMonth}
-            />
-          </LazyOnVisible>
-        </CardContent>
-      </Card>
-
-      <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
-        <Card
-          className="chart-container hand-border card-pop"
-          style={{ '--chart-accent': 'var(--pop-teal)' } as React.CSSProperties}
-        >
-          <CardHeader>
-            <CardTitle>Revenue by Destination</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <LazyOnVisible rootMargin="100px" fallback={<CardSkeleton />}>
-              <RevenueByDestChart
-                layout="horizontal"
-                data={data?.byDestination}
-              />
-            </LazyOnVisible>
-          </CardContent>
-        </Card>
-        <Card
-          className="chart-container hand-border card-pop"
-          style={{ '--chart-accent': 'var(--pop-red)' } as React.CSSProperties}
-        >
-          <CardHeader>
-            <CardTitle>Revenue by Booking Status</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <LazyOnVisible rootMargin="100px" fallback={<CardSkeleton />}>
-              <BookingStatusChart
-                mode="revenue"
-                data={
-                  filteredBookingStats.data && data
-                    ? {
-                        confirmed: data.totalRevenue,
-                        pending: 0,
-                        cancelled: data.cancelledRevenue,
-                      }
-                    : undefined
-                }
-              />
-            </LazyOnVisible>
-          </CardContent>
-        </Card>
-      </div>
+      <RevenueCharts
+        selectedMonth={selectedMonth}
+        monthlyData={data?.byMonth}
+        byDestination={data?.byDestination}
+        bookingStatus={bookingStatusData}
+      />
 
       <Card>
         <CardHeader>
