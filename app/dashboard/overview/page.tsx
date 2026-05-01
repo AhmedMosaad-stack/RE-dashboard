@@ -15,6 +15,7 @@ import {
 import { PageHeader } from '@/components/shared/PageHeader';
 import { StatCard } from '@/components/cards/StatCard';
 import { CardSkeleton, TableSkeleton } from '@/components/shared/LoadingSkeleton';
+import { LazyOnVisible } from '@/components/shared/LazyOnVisible';
 import { EmptyState } from '@/components/shared/EmptyState';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -188,10 +189,12 @@ export default function OverviewPage() {
             <CardTitle>Bookings Trend</CardTitle>
           </CardHeader>
           <CardContent>
-            <BookingsTrendChart
-              data={filteredBookingStats.data?.byMonth}
-              selectedMonth={selectedMonth}
-            />
+            <LazyOnVisible rootMargin="100px" fallback={<CardSkeleton />}>
+              <BookingsTrendChart
+                data={filteredBookingStats.data?.byMonth}
+                selectedMonth={selectedMonth}
+              />
+            </LazyOnVisible>
           </CardContent>
         </Card>
         <Card
@@ -202,18 +205,20 @@ export default function OverviewPage() {
             <CardTitle>Booking Status</CardTitle>
           </CardHeader>
           <CardContent>
-            <BookingStatusChart
-              mode="count"
-              data={
-                filteredBookingStats.data
-                  ? {
-                      confirmed: filteredBookingStats.data.confirmed,
-                      pending: filteredBookingStats.data.pending,
-                      cancelled: filteredBookingStats.data.cancelled,
-                    }
-                  : undefined
-              }
-            />
+            <LazyOnVisible rootMargin="100px" fallback={<CardSkeleton />}>
+              <BookingStatusChart
+                mode="count"
+                data={
+                  filteredBookingStats.data
+                    ? {
+                        confirmed: filteredBookingStats.data.confirmed,
+                        pending: filteredBookingStats.data.pending,
+                        cancelled: filteredBookingStats.data.cancelled,
+                      }
+                    : undefined
+                }
+              />
+            </LazyOnVisible>
           </CardContent>
         </Card>
       </div>
@@ -227,11 +232,13 @@ export default function OverviewPage() {
             <CardTitle>Revenue by Destination</CardTitle>
           </CardHeader>
           <CardContent>
-            <RevenueByDestChart
-              limit={5}
-              layout="horizontal"
-              data={filteredRevenueStats.data?.byDestination}
-            />
+            <LazyOnVisible rootMargin="100px" fallback={<CardSkeleton />}>
+              <RevenueByDestChart
+                limit={5}
+                layout="horizontal"
+                data={filteredRevenueStats.data?.byDestination}
+              />
+            </LazyOnVisible>
           </CardContent>
         </Card>
         <Card
@@ -242,10 +249,12 @@ export default function OverviewPage() {
             <CardTitle>Monthly Revenue</CardTitle>
           </CardHeader>
           <CardContent>
-            <MonthlyRevenueChart
-              data={filteredRevenueStats.data?.byMonth}
-              selectedMonth={selectedMonth}
-            />
+            <LazyOnVisible rootMargin="100px" fallback={<CardSkeleton />}>
+              <MonthlyRevenueChart
+                data={filteredRevenueStats.data?.byMonth}
+                selectedMonth={selectedMonth}
+              />
+            </LazyOnVisible>
           </CardContent>
         </Card>
       </div>

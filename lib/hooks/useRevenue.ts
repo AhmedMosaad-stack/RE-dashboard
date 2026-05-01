@@ -8,7 +8,8 @@ import {
 import { useDashboardStore } from '@/lib/store/useDashboardStore';
 import type { MonthlyRevenue, RevenueByDestination } from '@/types/revenue';
 
-const SIMULATED_DELAY = 500;
+const SIMULATED_DELAY =
+  process.env.NODE_ENV === 'development' ? 500 : 0;
 
 async function fetchMonthlyRevenue(): Promise<MonthlyRevenue[]> {
   await new Promise((resolve) => setTimeout(resolve, SIMULATED_DELAY));
@@ -74,7 +75,7 @@ export function useFilteredRevenueStats() {
   return useQuery({
     queryKey: ['revenue', 'filtered'],
     queryFn: async (): Promise<FilteredRevenueStats> => {
-      await new Promise((r) => setTimeout(r, 300));
+      await new Promise((r) => setTimeout(r, SIMULATED_DELAY));
       const { bookings, selectedMonth, selectedYear } =
         useDashboardStore.getState();
 

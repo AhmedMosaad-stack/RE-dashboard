@@ -14,6 +14,7 @@ import {
 import { PageHeader } from '@/components/shared/PageHeader';
 import { StatCard } from '@/components/cards/StatCard';
 import { CardSkeleton, TableSkeleton } from '@/components/shared/LoadingSkeleton';
+import { LazyOnVisible } from '@/components/shared/LazyOnVisible';
 import { EmptyState } from '@/components/shared/EmptyState';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import {
@@ -157,12 +158,14 @@ export default function RevenuePage() {
           <CardTitle>Monthly Revenue & Bookings</CardTitle>
         </CardHeader>
         <CardContent>
-          <MonthlyRevenueChart
-            showBookings
-            height={350}
-            data={data?.byMonth}
-            selectedMonth={selectedMonth}
-          />
+          <LazyOnVisible rootMargin="100px" fallback={<CardSkeleton />}>
+            <MonthlyRevenueChart
+              showBookings
+              height={350}
+              data={data?.byMonth}
+              selectedMonth={selectedMonth}
+            />
+          </LazyOnVisible>
         </CardContent>
       </Card>
 
@@ -175,10 +178,12 @@ export default function RevenuePage() {
             <CardTitle>Revenue by Destination</CardTitle>
           </CardHeader>
           <CardContent>
-            <RevenueByDestChart
-              layout="horizontal"
-              data={data?.byDestination}
-            />
+            <LazyOnVisible rootMargin="100px" fallback={<CardSkeleton />}>
+              <RevenueByDestChart
+                layout="horizontal"
+                data={data?.byDestination}
+              />
+            </LazyOnVisible>
           </CardContent>
         </Card>
         <Card
@@ -189,18 +194,20 @@ export default function RevenuePage() {
             <CardTitle>Revenue by Booking Status</CardTitle>
           </CardHeader>
           <CardContent>
-            <BookingStatusChart
-              mode="revenue"
-              data={
-                filteredBookingStats.data && data
-                  ? {
-                      confirmed: data.totalRevenue,
-                      pending: 0,
-                      cancelled: data.cancelledRevenue,
-                    }
-                  : undefined
-              }
-            />
+            <LazyOnVisible rootMargin="100px" fallback={<CardSkeleton />}>
+              <BookingStatusChart
+                mode="revenue"
+                data={
+                  filteredBookingStats.data && data
+                    ? {
+                        confirmed: data.totalRevenue,
+                        pending: 0,
+                        cancelled: data.cancelledRevenue,
+                      }
+                    : undefined
+                }
+              />
+            </LazyOnVisible>
           </CardContent>
         </Card>
       </div>

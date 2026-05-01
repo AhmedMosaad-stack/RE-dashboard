@@ -5,7 +5,8 @@ import { useQuery } from '@tanstack/react-query';
 import { useDashboardStore } from '@/lib/store/useDashboardStore';
 import type { Destination } from '@/types/destination';
 
-const SIMULATED_DELAY = 300;
+const SIMULATED_DELAY =
+  process.env.NODE_ENV === 'development' ? 300 : 0;
 
 export function useDestinations() {
   return useQuery({

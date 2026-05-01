@@ -9,6 +9,7 @@ import { toast } from 'sonner';
 
 import { PageHeader } from '@/components/shared/PageHeader';
 import { CardSkeleton } from '@/components/shared/LoadingSkeleton';
+import { LazyOnVisible } from '@/components/shared/LazyOnVisible';
 import { EmptyState } from '@/components/shared/EmptyState';
 import { ConfirmDialog } from '@/components/shared/ConfirmDialog';
 import { Button } from '@/components/ui/button';
@@ -88,7 +89,9 @@ export default function DestinationsPage() {
               <CardTitle>Global Reach</CardTitle>
             </CardHeader>
             <CardContent>
-              <DestinationsMap />
+              <LazyOnVisible rootMargin="100px" fallback={<CardSkeleton />}>
+                <DestinationsMap />
+              </LazyOnVisible>
             </CardContent>
           </Card>
 

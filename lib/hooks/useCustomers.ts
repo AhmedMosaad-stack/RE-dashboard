@@ -4,7 +4,8 @@ import { useQuery } from '@tanstack/react-query';
 import { useDashboardStore } from '@/lib/store/useDashboardStore';
 import type { Customer } from '@/types/customer';
 
-const SIMULATED_DELAY = 300;
+const SIMULATED_DELAY =
+  process.env.NODE_ENV === 'development' ? 300 : 0;
 
 export function useCustomers() {
   return useQuery({
