@@ -1,7 +1,7 @@
 'use client';
 
 import { Bell, LogOut, Menu, User as UserIcon, Settings } from 'lucide-react';
-import { usePathname, useRouter } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import {
@@ -14,19 +14,10 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Sheet, SheetContent, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { ThemeToggle } from '@/components/layout/ThemeToggle';
-import { Sidebar, navLinks } from '@/components/layout/Sidebar';
-
-function pageTitleFromPath(pathname: string): string {
-  const link = navLinks.find(
-    (l) => pathname === l.href || pathname.startsWith(`${l.href}/`)
-  );
-  return link ? link.label : 'Dashboard';
-}
+import { Sidebar } from '@/components/layout/Sidebar';
 
 export function Header() {
-  const pathname = usePathname();
   const router = useRouter();
-  const title = pageTitleFromPath(pathname);
 
   return (
     <header
@@ -54,12 +45,6 @@ export function Header() {
             <Sidebar />
           </SheetContent>
         </Sheet>
-        <h2
-          className="font-marker"
-          style={{ color: 'var(--ink)', fontSize: '1.8rem' }}
-        >
-          {title}
-        </h2>
       </div>
 
       <div className="flex items-center gap-1">

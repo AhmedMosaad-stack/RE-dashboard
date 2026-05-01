@@ -254,9 +254,6 @@
 .app-sidebar {
   border-right: 3px solid var(--ink);
 }
-.dark .app-sidebar {
-  border-right-color: var(--border-sidebar);
-}
 
 .sidebar-logo {
   font-family: var(--font-righteous), cursive;
@@ -290,7 +287,7 @@
 
 .sidebar-link[data-active='true'] {
   color: var(--ink);
-  background: var(--surface);
+  background: var(--background);
   font-weight: 700;
 }
 
