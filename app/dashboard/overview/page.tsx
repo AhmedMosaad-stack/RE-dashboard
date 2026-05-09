@@ -132,7 +132,7 @@ export default function OverviewPage() {
     <div className="page-fade-in space-y-6">
       <PageHeader title="Overview" subtitle="Business performance at a glance." />
 
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-1 lg:grid-cols-3">
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
         <StatCard
           title="Total Bookings"
           value={isLoading ? '' : formatNumber(filteredBookingStats.data?.total ?? 0)}
