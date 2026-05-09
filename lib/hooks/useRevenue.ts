@@ -71,6 +71,8 @@ export interface FilteredRevenueStats {
   cancelledRevenue: number;
 }
 
+const SHORT_MONTHS_REV = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+
 export function useFilteredRevenueStats() {
   return useQuery({
     queryKey: ['revenue', 'filtered'],
@@ -79,73 +81,46 @@ export function useFilteredRevenueStats() {
       const { bookings, selectedMonth, selectedYear } =
         useDashboardStore.getState();
 
-      const filtered = bookings.filter((b) => {
-        if (b.status !== 'confirmed') return false;
+      // Single pass over bookings
+      const byMonthRevenue = new Array(12).fill(0);
+      const byMonthBookings = new Array(12).fill(0);
+      const byDestMap: Record<string, number> = {};
+
+      let totalRevenue = 0, totalBookings = 0, cancelledRevenue = 0;
+
+      for (const b of bookings) {
         const date = new Date(b.departureDate);
-        const yearMatch = date.getFullYear() === selectedYear;
-        if (selectedMonth === 0) return yearMatch;
-        return yearMatch && date.getMonth() + 1 === selectedMonth;
-      });
+        if (date.getFullYear() !== selectedYear) continue;
+        const m = date.getMonth(); // 0-indexed
 
-      const byDestination = filtered.reduce<Record<string, number>>(
-        (acc, b) => {
-          acc[b.destination] = (acc[b.destination] || 0) + b.amount;
-          return acc;
-        },
-        {},
-      );
+        byMonthBookings[m]++;
+        if (b.status === 'confirmed') {
+          byMonthRevenue[m] += b.amount;
+          byDestMap[b.destination] = (byDestMap[b.destination] || 0) + b.amount;
+        }
 
-      const byMonth = Array.from({ length: 12 }, (_, i) => {
-        const month = i + 1;
-        const monthRevenue = bookings
-          .filter((b) => {
-            const d = new Date(b.departureDate);
-            return (
-              b.status === 'confirmed' &&
-              d.getFullYear() === selectedYear &&
-              d.getMonth() + 1 === month
-            );
-          })
-          .reduce((sum, b) => sum + b.amount, 0);
-        return {
-          month: new Date(selectedYear, i, 1).toLocaleString('default', {
-            month: 'short',
-          }),
-          revenue: monthRevenue,
-          bookings: bookings.filter((b) => {
-            const d = new Date(b.departureDate);
-            return (
-              d.getFullYear() === selectedYear &&
-              d.getMonth() + 1 === month
-            );
-          }).length,
-        };
-      });
+        // Filtered totals (respect selectedMonth)
+        if (selectedMonth !== 0 && m + 1 !== selectedMonth) continue;
+        if (b.status === 'confirmed') { totalRevenue += b.amount; totalBookings++; }
+        else if (b.status === 'cancelled') cancelledRevenue += b.amount;
+      }
 
       return {
-        totalRevenue: filtered.reduce((sum, b) => sum + b.amount, 0),
-        totalBookings: filtered.length,
-        avgPerBooking:
-          filtered.length > 0
-            ? filtered.reduce((sum, b) => sum + b.amount, 0) / filtered.length
-            : 0,
-        byDestination: Object.entries(byDestination).map(
-          ([destination, revenue]) => ({
-            destination,
-            revenue,
-          }),
-        ),
-        byMonth,
-        cancelledRevenue: bookings
-          .filter((b) => {
-            if (b.status !== 'cancelled') return false;
-            const date = new Date(b.departureDate);
-            const yearMatch = date.getFullYear() === selectedYear;
-            if (selectedMonth === 0) return yearMatch;
-            return yearMatch && date.getMonth() + 1 === selectedMonth;
-          })
-          .reduce((sum, b) => sum + b.amount, 0),
+        totalRevenue,
+        totalBookings,
+        avgPerBooking: totalBookings > 0 ? totalRevenue / totalBookings : 0,
+        byDestination: Object.entries(byDestMap).map(([destination, revenue]) => ({
+          destination,
+          revenue,
+        })),
+        byMonth: SHORT_MONTHS_REV.map((month, i) => ({
+          month,
+          revenue: byMonthRevenue[i],
+          bookings: byMonthBookings[i],
+        })),
+        cancelledRevenue,
       };
     },
   });
 }
+

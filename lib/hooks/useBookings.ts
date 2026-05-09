@@ -102,6 +102,8 @@ export function useFilteredBookings() {
   });
 }
 
+const SHORT_MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+
 export function useFilteredBookingStats() {
   return useQuery({
     queryKey: ['bookings', 'stats', 'filtered'],
@@ -109,45 +111,47 @@ export function useFilteredBookingStats() {
       await new Promise((r) => setTimeout(r, SIMULATED_DELAY));
       const { bookings, selectedMonth, selectedYear } =
         useDashboardStore.getState();
-      const filtered = bookings.filter((b) => {
+
+      // Single pass — group by month and accumulate stats simultaneously
+      type MonthBucket = { bookings: number; confirmed: number; pending: number; cancelled: number };
+      const byMonthMap: MonthBucket[] = Array.from({ length: 12 }, () => ({
+        bookings: 0, confirmed: 0, pending: 0, cancelled: 0,
+      }));
+
+      let total = 0, confirmed = 0, pending = 0, cancelled = 0;
+      let totalRevenue = 0, totalAmount = 0;
+
+      for (const b of bookings) {
         const date = new Date(b.departureDate);
-        const yearMatch = date.getFullYear() === selectedYear;
-        if (selectedMonth === 0) return yearMatch;
-        return yearMatch && date.getMonth() + 1 === selectedMonth;
-      });
+        if (date.getFullYear() !== selectedYear) continue;
+        const m = date.getMonth(); // 0-indexed
+
+        // Update monthly bucket (all months, for chart)
+        byMonthMap[m].bookings++;
+        if (b.status === 'confirmed') byMonthMap[m].confirmed++;
+        else if (b.status === 'pending') byMonthMap[m].pending++;
+        else if (b.status === 'cancelled') byMonthMap[m].cancelled++;
+
+        // Update filtered stats (only for selected month filter)
+        if (selectedMonth !== 0 && m + 1 !== selectedMonth) continue;
+        total++;
+        totalAmount += b.amount;
+        if (b.status === 'confirmed') { confirmed++; totalRevenue += b.amount; }
+        else if (b.status === 'pending') pending++;
+        else if (b.status === 'cancelled') cancelled++;
+      }
+
       return {
-        total: filtered.length,
-        confirmed: filtered.filter((b) => b.status === 'confirmed').length,
-        pending: filtered.filter((b) => b.status === 'pending').length,
-        cancelled: filtered.filter((b) => b.status === 'cancelled').length,
-        totalRevenue: filtered
-          .filter((b) => b.status === 'confirmed')
-          .reduce((sum, b) => sum + b.amount, 0),
-        avgOrderValue:
-          filtered.length > 0
-            ? filtered.reduce((sum, b) => sum + b.amount, 0) / filtered.length
-            : 0,
-        byMonth: Array.from({ length: 12 }, (_, i) => {
-          const month = i + 1;
-          const monthBookings = bookings.filter((b) => {
-            const d = new Date(b.departureDate);
-            return (
-              d.getFullYear() === selectedYear &&
-              d.getMonth() + 1 === month
-            );
-          });
-          return {
-            month: new Date(selectedYear, i, 1).toLocaleString('default', {
-              month: 'short',
-            }),
-            bookings: monthBookings.length,
-            confirmed: monthBookings.filter((b) => b.status === 'confirmed')
-              .length,
-            pending: monthBookings.filter((b) => b.status === 'pending').length,
-            cancelled: monthBookings.filter((b) => b.status === 'cancelled')
-              .length,
-          };
-        }),
+        total,
+        confirmed,
+        pending,
+        cancelled,
+        totalRevenue,
+        avgOrderValue: total > 0 ? totalAmount / total : 0,
+        byMonth: byMonthMap.map((bucket, i) => ({
+          month: SHORT_MONTHS[i],
+          ...bucket,
+        })),
       };
     },
   });

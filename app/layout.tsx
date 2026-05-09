@@ -18,7 +18,7 @@ const righteous = Righteous({
   subsets: ['latin'],
   weight: ['400'],
   display: 'swap',
-  preload: true,
+  preload: false,
 });
 
 const geistMono = Geist_Mono({
