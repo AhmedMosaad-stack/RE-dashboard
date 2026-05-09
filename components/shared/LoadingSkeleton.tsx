@@ -1,4 +1,4 @@
-import { Card, CardContent } from '@/components/ui/card';
+import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 
 export function CardSkeleton() {
@@ -37,6 +37,46 @@ export function TableSkeleton({ rows = 5, columns = 6 }: TableSkeletonProps) {
             ))}
           </div>
         ))}
+      </div>
+    </div>
+  );
+}
+
+export function ChartSkeleton({ className }: { className?: string }) {
+  return (
+    <Card className={`chart-container hand-border ${className || ''}`}>
+      <CardHeader>
+        <Skeleton className="h-6 w-48" />
+      </CardHeader>
+      <CardContent>
+        <Skeleton className="h-[350px] w-full" />
+      </CardContent>
+    </Card>
+  );
+}
+
+export function OverviewChartsSkeleton() {
+  return (
+    <div className="flex flex-col gap-4 w-full">
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-5">
+        <ChartSkeleton className="lg:col-span-3" />
+        <ChartSkeleton className="lg:col-span-2" />
+      </div>
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+        <ChartSkeleton />
+        <ChartSkeleton />
+      </div>
+    </div>
+  );
+}
+
+export function RevenueChartsSkeleton() {
+  return (
+    <div className="flex flex-col gap-4 w-full">
+      <ChartSkeleton />
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+        <ChartSkeleton />
+        <ChartSkeleton />
       </div>
     </div>
   );

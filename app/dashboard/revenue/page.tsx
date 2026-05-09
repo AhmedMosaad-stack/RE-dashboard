@@ -13,7 +13,7 @@ import {
 } from 'lucide-react';
 import { PageHeader } from '@/components/shared/PageHeader';
 import { StatCard } from '@/components/cards/StatCard';
-import { CardSkeleton, TableSkeleton } from '@/components/shared/LoadingSkeleton';
+import { CardSkeleton, TableSkeleton, RevenueChartsSkeleton } from '@/components/shared/LoadingSkeleton';
 import { LazyOnVisible } from '@/components/shared/LazyOnVisible';
 import { EmptyState } from '@/components/shared/EmptyState';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -153,7 +153,7 @@ export default function RevenuePage() {
         />
       </div>
 
-      <LazyOnVisible fallback={<div className="h-[400px] w-full" />}>
+      <LazyOnVisible fallback={<RevenueChartsSkeleton />}>
         <RevenueCharts
           selectedMonth={selectedMonth}
           monthlyData={data?.byMonth}

@@ -20,7 +20,7 @@ export default function RevenueCharts({
   bookingStatus,
 }: RevenueChartsProps) {
   return (
-    <>
+    <div className="flex flex-col gap-4 w-full">
       <Card
         className="chart-container hand-border card-pop"
         style={{ '--chart-accent': 'var(--pop-green)' } as React.CSSProperties}
@@ -62,6 +62,6 @@ export default function RevenueCharts({
           </CardContent>
         </Card>
       </div>
-    </>
+    </div>
   );
 }

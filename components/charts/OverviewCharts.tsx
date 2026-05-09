@@ -29,7 +29,7 @@ export default function OverviewCharts({
   revenueByMonth,
 }: OverviewChartsProps) {
   return (
-    <>
+    <div className="flex flex-col gap-4 w-full">
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-5">
         <Card
           className="chart-container hand-border card-pop lg:col-span-3"
@@ -89,6 +89,6 @@ export default function OverviewCharts({
           </CardContent>
         </Card>
       </div>
-    </>
+    </div>
   );
 }

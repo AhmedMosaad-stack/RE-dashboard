@@ -13,7 +13,7 @@ import {
 } from 'lucide-react';
 import { PageHeader } from '@/components/shared/PageHeader';
 import { StatCard } from '@/components/cards/StatCard';
-import { CardSkeleton, TableSkeleton } from '@/components/shared/LoadingSkeleton';
+import { CardSkeleton, TableSkeleton, OverviewChartsSkeleton } from '@/components/shared/LoadingSkeleton';
 import { LazyOnVisible } from '@/components/shared/LazyOnVisible';
 import { EmptyState } from '@/components/shared/EmptyState';
 import { Button } from '@/components/ui/button';
@@ -163,7 +163,7 @@ export default function OverviewPage() {
         />
       </div>
 
-      <LazyOnVisible fallback={<div className="h-[600px] w-full" />}>
+      <LazyOnVisible fallback={<OverviewChartsSkeleton />}>
         <OverviewCharts
           selectedMonth={selectedMonth}
           bookingsByMonth={filteredBookingStats.data?.byMonth}
