@@ -4,7 +4,6 @@ import {
   CalendarCheck,
   DollarSign,
   LayoutDashboard,
-  MapPin,
   Plane,
   Settings,
   Users,
@@ -15,11 +14,10 @@ import { SidebarLink } from '@/components/layout/SidebarLink';
 import { cn } from '@/lib/utils';
 
 export const navLinks = [
-  { href: '/dashboard/overview',     label: 'Overview',     icon: LayoutDashboard, iconColor: 'var(--pop-blue)'   },
-  { href: '/dashboard/bookings',     label: 'Bookings',     icon: CalendarCheck,   iconColor: 'var(--pop-blue)'   },
-  { href: '/dashboard/destinations', label: 'Destinations', icon: MapPin,          iconColor: 'var(--pop-teal)'   },
-  { href: '/dashboard/customers',    label: 'Customers',    icon: Users,           iconColor: 'var(--pop-orange)' },
-  { href: '/dashboard/revenue',      label: 'Revenue',      icon: DollarSign,      iconColor: 'var(--pop-green)'  },
+  { href: '/dashboard/overview',  label: 'Overview',  icon: LayoutDashboard, iconColor: 'var(--pop-blue)'   },
+  { href: '/dashboard/bookings',  label: 'Bookings',  icon: CalendarCheck,   iconColor: 'var(--pop-blue)'   },
+  { href: '/dashboard/customers', label: 'Customers', icon: Users,           iconColor: 'var(--pop-orange)' },
+  { href: '/dashboard/revenue',   label: 'Revenue',   icon: DollarSign,      iconColor: 'var(--pop-green)'  },
 ];
 
 export interface NavLink {

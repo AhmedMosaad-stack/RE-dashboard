@@ -9,7 +9,6 @@ import { toast } from 'sonner';
 import { Loader2 } from 'lucide-react';
 
 import { useDashboardStore } from '@/lib/store/useDashboardStore';
-import { useDestinations } from '@/lib/hooks/useDestinations';
 import { invalidateAll } from '@/lib/utils/invalidateAll';
 import type { Booking } from '@/types/booking';
 
@@ -64,13 +63,17 @@ interface BookingFormProps {
   onSuccess: () => void;
 }
 
+const DESTINATIONS = [
+  'Paris', 'Maldives', 'Dubai', 'Tokyo', 'Bali',
+  'New York', 'Rome', 'Barcelona', 'Sydney', 'Cairo',
+];
+
 export function BookingForm({ booking, onSuccess }: BookingFormProps) {
   const isEditMode = Boolean(booking);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const addBooking = useDashboardStore((s) => s.addBooking);
   const updateBooking = useDashboardStore((s) => s.updateBooking);
   const queryClient = useQueryClient();
-  const destinationsQuery = useDestinations();
 
   const form = useForm<BookingFormInput, unknown, BookingFormOutput>({
     resolver: zodResolver(bookingSchema),
@@ -168,9 +171,9 @@ export function BookingForm({ booking, onSuccess }: BookingFormProps) {
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    {destinationsQuery.data?.map((d) => (
-                      <SelectItem key={d.id} value={d.name}>
-                        {d.name}
+                    {DESTINATIONS.map((name) => (
+                      <SelectItem key={name} value={name}>
+                        {name}
                       </SelectItem>
                     ))}
                   </SelectContent>

@@ -1,10 +1,8 @@
 import { create } from 'zustand';
 import { bookings as bookingsData } from '@/lib/data/bookings';
 import { customers as customersData } from '@/lib/data/customers';
-import { destinations as destinationsData } from '@/lib/data/destinations';
 import type { Booking } from '@/types/booking';
 import type { Customer } from '@/types/customer';
-import type { Destination } from '@/types/destination';
 
 export type BookingStatusFilter = 'all' | 'confirmed' | 'pending' | 'cancelled';
 
@@ -31,7 +29,6 @@ interface DashboardStore {
   // ─── DATA COLLECTIONS ─────────────────────────────────────────────────────
   bookings: Booking[];
   customers: Customer[];
-  destinations: Destination[];
 
   // ─── BOOKING ACTIONS ──────────────────────────────────────────────────────
   addBooking: (booking: Omit<Booking, 'id' | 'createdAt'>) => void;
@@ -51,14 +48,6 @@ interface DashboardStore {
     updates: Partial<Omit<Customer, 'id' | 'joinedAt' | 'avatarUrl'>>,
   ) => void;
   deleteCustomer: (id: string) => void;
-
-  // ─── DESTINATION ACTIONS ──────────────────────────────────────────────────
-  addDestination: (destination: Omit<Destination, 'id'>) => void;
-  updateDestination: (
-    id: string,
-    updates: Partial<Omit<Destination, 'id'>>,
-  ) => void;
-  deleteDestination: (id: string) => void;
 }
 
 function todayISODate(): string {
@@ -88,7 +77,6 @@ export const useDashboardStore = create<DashboardStore>((set, get) => ({
   // ─── DATA SEED ────────────────────────────────────────────────────────────
   bookings: bookingsData,
   customers: customersData,
-  destinations: destinationsData,
 
   // ─── BOOKING ACTIONS ──────────────────────────────────────────────────────
   addBooking: (booking) => {
@@ -141,30 +129,6 @@ export const useDashboardStore = create<DashboardStore>((set, get) => ({
   deleteCustomer: (id) => {
     set((state) => ({
       customers: state.customers.filter((c) => c.id !== id),
-    }));
-  },
-
-  // ─── DESTINATION ACTIONS ──────────────────────────────────────────────────
-  addDestination: (destination) => {
-    const newId = `DS-${String(get().destinations.length + 1).padStart(3, '0')}`;
-    const newDestination: Destination = {
-      ...destination,
-      id: newId,
-    };
-    set((state) => ({
-      destinations: [...state.destinations, newDestination],
-    }));
-  },
-  updateDestination: (id, updates) => {
-    set((state) => ({
-      destinations: state.destinations.map((d) =>
-        d.id === id ? { ...d, ...updates } : d,
-      ),
-    }));
-  },
-  deleteDestination: (id) => {
-    set((state) => ({
-      destinations: state.destinations.filter((d) => d.id !== id),
     }));
   },
 }));

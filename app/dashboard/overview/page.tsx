@@ -9,7 +9,6 @@ import {
   ArrowRight,
   CalendarCheck,
   DollarSign,
-  MapPin,
   Users,
 } from 'lucide-react';
 import { PageHeader } from '@/components/shared/PageHeader';
@@ -51,7 +50,6 @@ import {
   useFilteredBookingStats,
 } from '@/lib/hooks/useBookings';
 import { useCustomerStats } from '@/lib/hooks/useCustomers';
-import { useTopDestinations } from '@/lib/hooks/useDestinations';
 import { useFilteredRevenueStats } from '@/lib/hooks/useRevenue';
 import { useDashboardStore } from '@/lib/store/useDashboardStore';
 import { formatCurrency, formatDate, formatNumber } from '@/lib/utils/formatters';
@@ -76,7 +74,6 @@ export default function OverviewPage() {
   const filteredBookingStats = useFilteredBookingStats();
   const customerStats = useCustomerStats();
   const filteredRevenueStats = useFilteredRevenueStats();
-  const topDestinations = useTopDestinations(1);
   const selectedMonth = useDashboardStore((s) => s.selectedMonth);
   const selectedYear = useDashboardStore((s) => s.selectedYear);
 
@@ -84,14 +81,12 @@ export default function OverviewPage() {
     bookingsQuery.isError ||
     filteredBookingStats.isError ||
     customerStats.isError ||
-    filteredRevenueStats.isError ||
-    topDestinations.isError;
+    filteredRevenueStats.isError;
 
   const isLoading =
     filteredBookingStats.isLoading ||
     customerStats.isLoading ||
-    filteredRevenueStats.isLoading ||
-    topDestinations.isLoading;
+    filteredRevenueStats.isLoading;
 
   const recentBookings = useMemo(
     () =>
@@ -120,7 +115,6 @@ export default function OverviewPage() {
     );
   }
 
-  const topDestName = topDestinations.top?.[0]?.name ?? '—';
   const filterLabel =
     selectedMonth === 0
       ? `All of ${selectedYear}`
@@ -138,7 +132,7 @@ export default function OverviewPage() {
     <div className="page-fade-in space-y-6">
       <PageHeader title="Overview" subtitle="Business performance at a glance." />
 
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-1 lg:grid-cols-3">
         <StatCard
           title="Total Bookings"
           value={isLoading ? '' : formatNumber(filteredBookingStats.data?.total ?? 0)}
@@ -165,15 +159,6 @@ export default function OverviewPage() {
           description="vs last month"
           isLoading={isLoading}
           index={2}
-        />
-        <StatCard
-          title="Top Destination"
-          value={isLoading ? '' : topDestName}
-          change={NaN}
-          icon={MapPin}
-          description={isLoading ? '' : `${topDestinations.top?.[0]?.totalBookings ?? 0} bookings`}
-          isLoading={isLoading}
-          index={3}
         />
       </div>
 

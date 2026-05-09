@@ -7,8 +7,6 @@ export function invalidateAll(queryClient: QueryClient): void {
   queryClient.invalidateQueries({ queryKey: ['bookings', 'filtered'] });
   queryClient.invalidateQueries({ queryKey: ['customers'] });
   queryClient.invalidateQueries({ queryKey: ['customers', 'stats'] });
-  queryClient.invalidateQueries({ queryKey: ['destinations'] });
-  queryClient.invalidateQueries({ queryKey: ['destinations', 'top'] });
   queryClient.invalidateQueries({ queryKey: ['revenue'] });
   queryClient.invalidateQueries({ queryKey: ['revenue', 'stats'] });
   queryClient.invalidateQueries({ queryKey: ['revenue', 'filtered'] });

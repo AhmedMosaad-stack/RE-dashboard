@@ -113,12 +113,12 @@ export default function BookingsPage() {
           </Select>
 
           <div className="relative w-full sm:w-72">
-            <Search className="text-muted-foreground absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2" />
+            <Search className="text-muted-foreground pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2" />
             <Input
               placeholder="Search bookings..."
               value={searchQuery}
               onChange={(event) => setSearchQuery(event.target.value)}
-              className="pl-9"
+              style={{ paddingLeft: '2.25rem' }}
             />
           </div>
         </div>
