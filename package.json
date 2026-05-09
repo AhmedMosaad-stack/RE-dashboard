@@ -9,10 +9,10 @@
     "lint": "eslint"
   },
   "browserslist": [
-    "chrome >= 89",
-    "edge >= 89",
-    "firefox >= 89",
-    "safari >= 15"
+    "chrome >= 92",
+    "edge >= 92",
+    "firefox >= 90",
+    "safari >= 15.4"
   ],
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",

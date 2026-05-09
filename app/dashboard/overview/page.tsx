@@ -14,6 +14,7 @@ import {
 import { PageHeader } from '@/components/shared/PageHeader';
 import { StatCard } from '@/components/cards/StatCard';
 import { CardSkeleton, TableSkeleton } from '@/components/shared/LoadingSkeleton';
+import { LazyOnVisible } from '@/components/shared/LazyOnVisible';
 import { EmptyState } from '@/components/shared/EmptyState';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -162,13 +163,15 @@ export default function OverviewPage() {
         />
       </div>
 
-      <OverviewCharts
-        selectedMonth={selectedMonth}
-        bookingsByMonth={filteredBookingStats.data?.byMonth}
-        bookingStatus={bookingStatusData}
-        revenueByDest={filteredRevenueStats.data?.byDestination}
-        revenueByMonth={filteredRevenueStats.data?.byMonth}
-      />
+      <LazyOnVisible fallback={<div className="h-[600px] w-full" />}>
+        <OverviewCharts
+          selectedMonth={selectedMonth}
+          bookingsByMonth={filteredBookingStats.data?.byMonth}
+          bookingStatus={bookingStatusData}
+          revenueByDest={filteredRevenueStats.data?.byDestination}
+          revenueByMonth={filteredRevenueStats.data?.byMonth}
+        />
+      </LazyOnVisible>
 
       <Card>
         <CardHeader className="flex-row items-center justify-between">

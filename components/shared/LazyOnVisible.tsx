@@ -31,7 +31,12 @@ export function LazyOnVisible({
     const observer = new IntersectionObserver(
       (entries) => {
         if (entries.some((entry) => entry.isIntersecting)) {
-          setVisible(true);
+          // Yield to main thread before loading heavy components to avoid TBT
+          if ('requestIdleCallback' in window) {
+            (window as any).requestIdleCallback(() => setVisible(true), { timeout: 1000 });
+          } else {
+            setTimeout(() => setVisible(true), 100);
+          }
           observer.disconnect();
         }
       },

@@ -14,6 +14,7 @@ import {
 import { PageHeader } from '@/components/shared/PageHeader';
 import { StatCard } from '@/components/cards/StatCard';
 import { CardSkeleton, TableSkeleton } from '@/components/shared/LoadingSkeleton';
+import { LazyOnVisible } from '@/components/shared/LazyOnVisible';
 import { EmptyState } from '@/components/shared/EmptyState';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import {
@@ -152,12 +153,14 @@ export default function RevenuePage() {
         />
       </div>
 
-      <RevenueCharts
-        selectedMonth={selectedMonth}
-        monthlyData={data?.byMonth}
-        byDestination={data?.byDestination}
-        bookingStatus={bookingStatusData}
-      />
+      <LazyOnVisible fallback={<div className="h-[400px] w-full" />}>
+        <RevenueCharts
+          selectedMonth={selectedMonth}
+          monthlyData={data?.byMonth}
+          byDestination={data?.byDestination}
+          bookingStatus={bookingStatusData}
+        />
+      </LazyOnVisible>
 
       <Card>
         <CardHeader>
