@@ -140,8 +140,6 @@ export function FloatingCalendarButton() {
     ? pos.x + BTN_SIZE / 2 > window.innerWidth / 2
     : true;
 
-  if (!pos) return null; // not mounted yet
-
   const pickerStyle: React.CSSProperties = {
     position: 'absolute',
     top: '50%',
@@ -156,11 +154,12 @@ export function FloatingCalendarButton() {
       ref={containerRef}
       style={{
         position: 'fixed',
-        left: pos.x,
-        top: pos.y,
+        left: pos?.x ?? -100,
+        top: pos?.y ?? -100,
         width: BTN_SIZE,
         height: BTN_SIZE,
         zIndex: 9999,
+        visibility: pos ? 'visible' : 'hidden',
         transition: isSnapping ? 'left 300ms cubic-bezier(.4,0,.2,1), top 300ms cubic-bezier(.4,0,.2,1)' : 'none',
         userSelect: 'none',
       }}

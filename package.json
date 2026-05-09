@@ -8,6 +8,12 @@
     "start": "next start",
     "lint": "eslint"
   },
+  "browserslist": [
+    "chrome >= 89",
+    "edge >= 89",
+    "firefox >= 89",
+    "safari >= 15"
+  ],
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",
     "@radix-ui/react-label": "^2.1.8",
